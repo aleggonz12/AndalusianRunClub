@@ -1,8 +1,10 @@
 <?php
-include("seguridad_admin.php");
+include("seguridad_admin.php"); // Mantén tu archivo de seguridad
 include("../conexion.php");
 
-// 1. LÓGICA PARA AÑADIR CARRERA (CREATE)
+$mensaje = "";
+
+// 1. LÓGICA PARA AÑADIR CARRERA (CREATE) - Versión Segura
 if (isset($_POST["guardar_carrera"])) {
     $nombre = $_POST["nombre"];
     $fecha = $_POST["fecha"];
@@ -11,24 +13,29 @@ if (isset($_POST["guardar_carrera"])) {
     $tipo = $_POST["tipo"];
     $web = $_POST["web_oficial"];
 
-    $sql_insert = "INSERT INTO carreras (nombre, fecha, lugar, distancia, tipo, web_oficial) 
-                   VALUES ('$nombre', '$fecha', '$lugar', '$distancia', '$tipo', '$web')";
+    // Usamos sentencia preparada
+    $stmt = $conn->prepare("INSERT INTO carreras (nombre, fecha, lugar, distancia, tipo, web_oficial) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssdss", $nombre, $fecha, $lugar, $distancia, $tipo, $web);
     
-    if ($conn->query($sql_insert) === TRUE) {
-        $mensaje = "<div class='alert alert-success'>Carrera añadida correctamente al calendario.</div>";
+    if ($stmt->execute()) {
+        $mensaje = "<div class='alert alert-success shadow-sm'>Carrera añadida correctamente al calendario.</div>";
     } else {
-        $mensaje = "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
+        $mensaje = "<div class='alert alert-danger shadow-sm'>Error: " . $conn->error . "</div>";
     }
+    $stmt->close();
 }
 
-// 2. LÓGICA PARA ELIMINAR (DELETE)
+// 2. LÓGICA PARA ELIMINAR (DELETE) - Versión Segura
 if (isset($_GET["eliminar"])) {
     $id_carrera = $_GET["eliminar"];
-    $conn->query("DELETE FROM carreras WHERE id = '$id_carrera'");
-    $mensaje = "<div class='alert alert-warning'>Carrera eliminada del sistema.</div>";
+    $stmt_del = $conn->prepare("DELETE FROM carreras WHERE id = ?");
+    $stmt_del->bind_param("i", $id_carrera);
+    $stmt_del->execute();
+    $mensaje = "<div class='alert alert-warning shadow-sm'>Carrera eliminada del sistema.</div>";
+    $stmt_del->close();
 }
 
-// Consultar todas las carreras ordenadas por fecha
+// Consultar todas las carreras
 $resultado_carreras = $conn->query("SELECT * FROM carreras ORDER BY fecha DESC");
 ?>
 
@@ -40,28 +47,35 @@ $resultado_carreras = $conn->query("SELECT * FROM carreras ORDER BY fecha DESC")
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between mb-4">
-            <h1>Gestión del Calendario Andaluz</h1>
-            <a href="index.php" class="btn btn-secondary">Volver al Panel</a>
+
+    <?php include("navbar_admin.php"); ?>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold">Gestión del Calendario</h1>
+                <p class="text-muted">Panel de control administrativo para eventos de Andalucía.</p>
+            </div>
         </div>
 
-        <?php if(isset($mensaje)) echo $mensaje; ?>
+        <?php echo $mensaje; ?>
 
-        <div class="card mb-5 shadow-sm">
-            <div class="card-header bg-info text-dark"><h5>Añadir Nueva Carrera Popular</h5></div>
-            <div class="card-body">
+        <div class="card mb-5 shadow-sm border-0">
+            <div class="card-header bg-dark text-white fw-bold py-3">
+                <i class="bi bi-plus-circle me-2"></i>Añadir Nueva Carrera Popular
+            </div>
+            <div class="card-body p-4">
                 <form action="" method="POST" class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Nombre de la Carrera</label>
-                        <input type="text" name="nombre" class="form-control" required>
+                        <label class="form-label fw-bold">Nombre de la Carrera</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej: Nocturna de Sevilla" required>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Fecha</label>
+                        <label class="form-label fw-bold">Fecha</label>
                         <input type="date" name="fecha" class="form-control" required>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Tipo</label>
+                        <label class="form-label fw-bold">Tipo</label>
                         <select name="tipo" class="form-select" required>
                             <option value="popular">Popular</option>
                             <option value="media">Media Maratón</option>
@@ -70,45 +84,45 @@ $resultado_carreras = $conn->query("SELECT * FROM carreras ORDER BY fecha DESC")
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Lugar (Provincia/Ciudad)</label>
-                        <input type="text" name="lugar" class="form-control" placeholder="Ej: Sevilla" required>
+                        <label class="form-label fw-bold">Lugar</label>
+                        <input type="text" name="lugar" class="form-control" placeholder="Ej: Córdoba" required>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label">Distancia (km)</label>
-                        <input type="number" name="distancia" class="form-control" required>
+                        <label class="form-label fw-bold">Distancia (km)</label>
+                        <input type="number" step="0.1" name="distancia" class="form-control" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Enlace Web Oficial (opcional)</label>
+                        <label class="form-label fw-bold">Enlace Web Oficial</label>
                         <input type="url" name="web_oficial" class="form-control" placeholder="https://...">
                     </div>
                     <div class="col-12 text-end">
-                        <button type="submit" name="guardar_carrera" class="btn btn-info">Guardar Carrera</button>
+                        <button type="submit" name="guardar_carrera" class="btn btn-primary fw-bold px-4">Guardar Carrera</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm border-0">
             <div class="card-body">
-                <table class="table table-sm table-hover">
-                    <thead class="table-dark">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
                         <tr>
                             <th>Fecha</th>
                             <th>Nombre</th>
                             <th>Lugar</th>
                             <th>Tipo</th>
-                            <th>Acciones</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php while($c = $resultado_carreras->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo date("d/m/Y", strtotime($c["fecha"])); ?></td>
+                            <td class="fw-bold"><?php echo date("d/m/Y", strtotime($c["fecha"])); ?></td>
                             <td><?php echo $c["nombre"]; ?></td>
                             <td><?php echo $c["lugar"]; ?></td>
                             <td><span class="badge bg-secondary"><?php echo $c["tipo"]; ?></span></td>
-                            <td>
-                                <a href="?eliminar=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar esta carrera?')">Eliminar</a>
+                            <td class="text-center">
+                                <a href="?eliminar=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm px-3" onclick="return confirm('¿Seguro que quieres eliminar esta carrera?')">Eliminar</a>
                             </td>
                         </tr>
                         <?php endwhile; ?>

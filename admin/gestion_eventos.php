@@ -2,7 +2,9 @@
 include("seguridad_admin.php");
 include("../conexion.php");
 
-// 1. LÓGICA PARA AÑADIR EVENTO (CREATE)
+$mensaje = "";
+
+// 1. LÓGICA PARA AÑADIR EVENTO (CREATE) - Versión Blindada
 if (isset($_POST["guardar_evento"])) {
     $nombre = $_POST["nombre"];
     $descripcion = $_POST["descripcion"];
@@ -10,27 +12,32 @@ if (isset($_POST["guardar_evento"])) {
     $lugar = $_POST["lugar"];
     $plazas = $_POST["plazas"];
 
-    $sql_insert = "INSERT INTO eventos (nombre, descripcion, fecha, lugar, plazas) 
-                   VALUES ('$nombre', '$descripcion', '$fecha', '$lugar', '$plazas')";
+    // Usamos sentencia preparada para insertar con seguridad
+    $stmt = $conn->prepare("INSERT INTO eventos (nombre, descripcion, fecha, lugar, plazas) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssi", $nombre, $descripcion, $fecha, $lugar, $plazas);
     
-    if ($conn->query($sql_insert) === TRUE) {
-        $mensaje = "<div class='alert alert-success'>Evento creado con éxito.</div>";
+    if ($stmt->execute()) {
+        $mensaje = "<div class='alert alert-success shadow-sm'>Evento creado con éxito e incorporado al sistema.</div>";
     } else {
-        $mensaje = "<div class='alert alert-danger'>Error: " . $conn->error . "</div>";
+        $mensaje = "<div class='alert alert-danger shadow-sm'>Error al crear evento: " . $conn->error . "</div>";
     }
+    $stmt->close();
 }
 
-// 2. LÓGICA PARA ELIMINAR EVENTO (DELETE)
+// 2. LÓGICA PARA ELIMINAR EVENTO (DELETE) - Versión Blindada
 if (isset($_GET["eliminar"])) {
     $id_evento = $_GET["eliminar"];
-    $sql_borrar = "DELETE FROM eventos WHERE id = '$id_evento'";
     
-    if ($conn->query($sql_borrar) === TRUE) {
-        $mensaje = "<div class='alert alert-warning'>Evento eliminado correctamente.</div>";
+    $stmt_del = $conn->prepare("DELETE FROM eventos WHERE id = ?");
+    $stmt_del->bind_param("i", $id_evento);
+    
+    if ($stmt_del->execute()) {
+        $mensaje = "<div class='alert alert-warning shadow-sm'>Evento eliminado correctamente.</div>";
     }
+    $stmt_del->close();
 }
 
-// Consultar eventos existentes
+// Consultar eventos existentes (Lectura segura)
 $resultado_eventos = $conn->query("SELECT * FROM eventos ORDER BY fecha ASC");
 ?>
 
@@ -38,72 +45,101 @@ $resultado_eventos = $conn->query("SELECT * FROM eventos ORDER BY fecha ASC");
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Eventos - Admin</title>
+    <title>Gestión de Eventos - Admin RunClub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between mb-4">
-            <h1>Gestión de Eventos Grupales</h1>
-            <a href="index.php" class="btn btn-secondary">Volver al Panel</a>
+
+    <?php include("navbar_admin.php"); ?>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold">Gestión de Entrenamientos y Eventos</h1>
+                <p class="text-muted">Administra los eventos exclusivos para los socios del club.</p>
+            </div>
         </div>
 
-        <?php if(isset($mensaje)) echo $mensaje; ?>
+        <?php echo $mensaje; ?>
 
-        <div class="card mb-5 shadow-sm">
-            <div class="card-header bg-success text-white"><h5>Crear Nuevo Entrenamiento</h5></div>
-            <div class="card-body">
+        <div class="card mb-5 shadow-sm border-0">
+            <div class="card-header bg-dark text-white fw-bold py-3">
+                Crear Nuevo Evento / Entrenamiento
+            </div>
+            <div class="card-body p-4">
                 <form action="" method="POST" class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Nombre del Evento</label>
-                        <input type="text" name="nombre" class="form-control" placeholder="Ej: Tirada larga por el Guadalquivir" required>
+                        <label class="form-label fw-bold">Nombre del Evento</label>
+                        <input type="text" name="nombre" class="form-control" placeholder="Ej: Entrenamiento de Series en Pista" required>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Fecha</label>
+                        <label class="form-label fw-bold">Fecha</label>
                         <input type="date" name="fecha" class="form-control" required>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">Plazas Disponibles</label>
-                        <input type="number" name="plazas" class="form-control" required>
+                        <label class="form-label fw-bold">Plazas Totales</label>
+                        <input type="number" name="plazas" class="form-control" placeholder="Ej: 20" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ciudad</label>
-                        <input type="text" name="lugar" class="form-control" required>
+                        <label class="form-label fw-bold">Lugar</label>
+                        <input type="text" name="lugar" class="form-control" placeholder="Ej: Instalaciones Deportivas La Cartuja" required>
                     </div>
                     <div class="col-md-12">
-                        <label class="form-label">Descripción / Detalles</label>
-                        <textarea name="descripcion" class="form-control" rows="2" required></textarea>
+                        <label class="form-label fw-bold">Descripción del Evento</label>
+                        <textarea name="descripcion" class="form-control" rows="2" placeholder="Explica brevemente en qué consiste el evento..." required></textarea>
                     </div>
-                    <div class="col-12">
-                        <button type="submit" name="guardar_evento" class="btn btn-success">Publicar Evento</button>
+                    <div class="col-12 text-end">
+                        <button type="submit" name="guardar_evento" class="btn btn-primary fw-bold px-4">Publicar Evento</button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <table class="table table-hover">
-                    <thead class="table-dark">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
                         <tr>
-                            <th>Fecha</th>
+                            <th class="ps-4">Fecha</th>
                             <th>Evento</th>
-                            <th>Ciudad</th>
-                            <th>Plazas</th>
-                            <th>Acciones</th>
+                            <th>Lugar</th>
+                            <th class="text-center">Plazas</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php while($ev = $resultado_eventos->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo date("d/m/Y", strtotime($ev["fecha"])); ?></td>
-                            <td><strong><?php echo $ev["nombre"]; ?></strong></td>
-                            <td><?php echo $ev["lugar"]; ?></td>
-                            <td><?php echo $ev["plazas"]; ?></td>
+                            <td class="ps-4 fw-bold"><?php echo date("d/m/Y", strtotime($ev["fecha"])); ?></td>
                             <td>
+                                <div class="fw-bold"><?php echo $ev["nombre"]; ?></div>
+                                <small class="text-muted"><?php echo substr($ev["descripcion"], 0, 50) . "..."; ?></small>
+                            </td>
+                            <td><?php echo $ev["lugar"]; ?></td>
+                            <td class="text-center">
+    <?php 
+        // Lógica de colores para las plazas del evento
+        if ($ev["plazas"] <= 0) {
+            $clase_plazas = "bg-danger"; // Rojo: Completo
+            $texto_plazas = "Completo";
+        } elseif ($ev["plazas"] < 10) {
+            $clase_plazas = "bg-warning text-dark"; // Naranja: Últimas plazas
+            $texto_plazas = $ev["plazas"] . " últimas plazas";
+        } else {
+            $clase_plazas = "bg-success"; // Verde: Disponible
+            $texto_plazas = $ev["plazas"] . " plazas libres";
+        }
+    ?>
+    <span class="badge rounded-pill <?php echo $clase_plazas; ?> px-3">
+        <?php echo $texto_plazas; ?>
+    </span>
+</td>
+                            <td class="text-center pe-4">
                                 <a href="?eliminar=<?php echo $ev['id']; ?>" 
-                                   class="btn btn-danger btn-sm" 
-                                   onclick="return confirm('¿Eliminar este entrenamiento?')">Eliminar</a>
+                                   class="btn btn-outline-danger btn-sm" 
+                                   onclick="return confirm('¿Estás seguro de que quieres eliminar este entrenamiento permanentemente?')">
+                                   Eliminar
+                                </a>
                             </td>
                         </tr>
                         <?php endwhile; ?>
@@ -112,5 +148,7 @@ $resultado_eventos = $conn->query("SELECT * FROM eventos ORDER BY fecha ASC");
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
