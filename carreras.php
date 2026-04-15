@@ -52,17 +52,12 @@ $resultado = $conn->query($sql);
 </head>
 <body class="bg-light">
 
-<div class="container mt-5">
+<?php include("navbar.php"); ?>
 
-<h2>Carreras populares en Andalucía</h2>
-
-<a href="dashboard.php" class="btn btn-secondary mb-3 mt-3">Volver al menú</a>
-
-<hr>
-
-<div class="card mb-4 shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title">Filtrar carreras</h5>
+<div class="container mt-4"> <h2 class="fw-bold mb-4">Carreras populares en Andalucía</h2>
+    
+    <div class="card mb-4 shadow-sm border-0"> <div class="card-body">
+            <h5 class="card-title text-secondary small fw-bold uppercase mb-3">FILTRAR CARRERAS</h5>
 
         <form method="GET" action="carreras.php">
             <div class="row">

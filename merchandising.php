@@ -58,13 +58,11 @@ $resultado = $conn->query($sql);
 </head>
 <body class="bg-light">
 
-<div class="container mt-5">
+<?php include("navbar.php"); ?>
 
-<h2 class="mb-4">Tienda oficial</h2>
+<div class="container mt-4">
 
-<a href="dashboard.php" class="btn btn-secondary mb-4">Volver al menú</a>
-
-<hr>
+<h2 class="fw-bold mb-4">Tienda oficial</h2>
 
 <?php
 if ($resultado->num_rows > 0) {

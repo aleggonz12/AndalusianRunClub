@@ -14,7 +14,7 @@
           <a class="nav-link" href="carreras.php">Carreras</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="eventos.php">Entrenamientos</a>
+          <a class="nav-link" href="eventos.php">Eventos</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="merchandising.php">Tienda</a>
@@ -24,8 +24,8 @@
             Mi Perfil
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="mis_planes.php">Mis Planes</a></li>
             <li><a class="dropdown-item" href="mis_eventos.php">Mis Eventos</a></li>
+            <li><a class="dropdown-item" href="mis_planes.php">Mis Planes</a></li>
             <li><a class="dropdown-item" href="mis_compras.php">Mis Compras</a></li>
           </ul>
         </li>

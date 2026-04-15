@@ -62,6 +62,16 @@ $sql_usuario = "SELECT nivel FROM usuarios WHERE id = '$usuario_id'";
 $resultado_usuario = $conn->query($sql_usuario);
 $usuario = $resultado_usuario->fetch_assoc();
 
+// Definir el color del badge según el nivel
+$color_nivel = "bg-secondary"; 
+if ($usuario["nivel"] == "principiante") {
+    $color_nivel = "bg-success"; 
+} elseif ($usuario["nivel"] == "intermedio") {
+    $color_nivel = "bg-warning text-dark"; 
+} elseif ($usuario["nivel"] == "avanzado") {
+    $color_nivel = "bg-danger"; 
+}
+
 // Calcular semanas hasta la carrera
 $fecha_carrera = new DateTime($carrera["fecha"]);
 $hoy = new DateTime();
@@ -125,19 +135,27 @@ if ($tipo == "corta") {
 </head>
 <body class="bg-light">
 
-<div class="container mt-5">
+<?php include("navbar.php"); ?>
 
-<h2 class="mb-4">Plan de entrenamiento para <?php echo $carrera["nombre"]; ?></h2>
+<div class="container mt-4">
 
-<a href="carreras.php" class="btn btn-secondary btn-sm me-4 mb-4">Volver a carreras</a>
-<a href="mis_planes.php" class="btn btn-secondary btn-sm mb-4">Volver a mis planes</a>
+    <h2 class="fw-bold mb-4">Plan de entrenamiento para <?php echo $carrera["nombre"]; ?></h2>
 
-<p><strong>Distancia:</strong> <?php echo $carrera["distancia"]; ?> km</p>
-<p><strong>Fecha:</strong> <?php echo $fecha_formateada; ?></p>
-<p><strong>Tu nivel:</strong> <?php echo $usuario["nivel"]; ?></p>
-<p><strong>Semanas hasta la carrera:</strong> <?php echo $semanas; ?></p>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h5 class="text-secondary small fw-bold uppercase mb-3">DETALLES DE LA CARRERA</h5>
+                    <p class="mb-1"><strong>Distancia:</strong> <?php echo $carrera["distancia"]; ?> km</p>
+                    <p class="mb-1"><strong>Fecha:</strong> <?php echo $fecha_formateada; ?></p>
+                    <p class="mb-1"><strong>Tu nivel:</strong> <span class="badge <?php echo $color_nivel; ?>"> <?php echo $usuario["nivel"]; ?></span></p>
+                    <p class="mb-0"><strong>Semanas:</strong> <?php echo $semanas; ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<hr>
+    <hr class="mb-4">
 
 <?php
 if ($semanas <= 0) {
