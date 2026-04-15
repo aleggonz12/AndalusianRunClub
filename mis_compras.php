@@ -67,6 +67,6 @@ if ($resultado->num_rows > 0) {
     echo "Aún no has realizado ninguna compra.";
 }
 ?>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

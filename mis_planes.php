@@ -77,6 +77,6 @@ if ($resultado->num_rows > 0) {
     echo "Todavía no has guardado ningún plan.";
 }
 ?>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
