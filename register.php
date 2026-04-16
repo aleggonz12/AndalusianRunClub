@@ -39,11 +39,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro - RunClub</title>
+    <title>Registro - Andalusian Run Club</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); min-height: 100vh; display: flex; align-items: center; padding: 20px 0; }
         .card-register { border-radius: 15px; border: none; }
+        .arc-logo {
+        height: 75px; /* Ajusta este valor para que el logo se vea bien con el texto */
+        width: auto;
+        object-fit: contain;
+    }
+        .arc-title {
+        color: #174d19; /* Un verde oscuro intenso para el nombre de la marca */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .btn-register {
+        background-color: #8dd392 !important; 
+    }
     </style>
 </head>
 <body>
@@ -53,7 +65,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="col-md-6 col-lg-5">
             
             <div class="text-center mb-4">
-                <h2 class="fw-bold text-primary">🏃‍♂️ RunClub</h2>
+                <img src="Logo_Andalusian_Run_Club.png" alt="Logo ARC" class="me-2 arc-logo">
+                <h2 class="arc-title">Andalusian Run Club</h2>
                 <p class="text-muted">Únete a nuestra comunidad</p>
             </div>
 
@@ -75,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="correo@ejemplo.com" required>
+                            <input type="email" name="email" class="form-control" placeholder="nombre@ejemplo.com" required>
                         </div>
 
                         <div class="mb-3">
@@ -104,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3">Registrarse</button>
+                        <button type="submit" class="btn btn-register w-100 fw-bold py-2 mb-3">Registrarse</button>
                     </form>
 
                     <div class="text-center">

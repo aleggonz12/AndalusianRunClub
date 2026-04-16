@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - RunClub</title>
+    <title>Login - Andalusian Run Club</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -56,6 +56,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 15px;
             border: none;
         }
+        .arc-logo {
+        height: 75px; /* Ajusta este valor para que el logo se vea bien con el texto */
+        width: auto;
+        object-fit: contain;
+    }
+        .arc-title {
+        color: #174d19; /* Un verde oscuro intenso para el nombre de la marca */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .btn-entrar {
+        background-color: #8dd392 !important; 
+    }
     </style>
 </head>
 <body>
@@ -65,13 +77,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="col-md-5 col-lg-4">
             
             <div class="text-center mb-4">
-                <h2 class="fw-bold text-primary">🏃‍♂️ RunClub</h2>
+                <img src="Logo_Andalusian_Run_Club.png" alt="Logo ARC" class="me-2 arc-logo">
+                <h2 class="arc-title">Andalusian Run Club</h2>
                 <p class="text-muted">Inicia sesión para entrenar</p>
             </div>
 
             <div class="card shadow card-login">
                 <div class="card-body p-4">
-                    <h4 class="card-title mb-4 fw-bold">Acceso</h4>
+                    <h4 class="card-title mb-4 fw-bold">Iniciar sesión</h4>
 
                     <?php if ($error != ""): ?>
                         <div class="alert alert-danger py-2 small" role="alert">
@@ -87,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="mb-4">
                         <label class="form-label small fw-bold">Contraseña</label>
-                        <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                        <input type="password" name="password" id="password" class="form-control" required>
                         
                         <div class="form-check mt-2">
                             <input class="form-check-input" type="checkbox" id="verPass" onclick="mostrarPassword()">
@@ -97,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </div>
 
-                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mb-3">
+                        <button type="submit" class="btn btn-entrar w-100 fw-bold py-2 mb-3">
                             Entrar
                         </button>
                     </form>
@@ -108,10 +121,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </p>
                     </div>
                 </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <a href="index.php" class="text-muted small text-decoration-none">← Volver al inicio</a>
             </div>
 
         </div>
