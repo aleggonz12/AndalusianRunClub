@@ -9,11 +9,20 @@ $path_to_root = ($directorio_actual == 'admin') ? "../" : "";
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow mb-4" style="border-bottom: 3px solid #ffc107;">
   <div class="container">
     <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
-      🏃‍♂️ RunClub 
+      <img src="<?php echo $path_to_root; ?>Logo_Andalusian_Run_Club.png" alt="Logo ARC" class="me-2 arc-logo">
+      Andalusian Run Club 
       <span class="badge bg-warning text-dark ms-2" style="font-size: 0.5em; letter-spacing: 1px;">
            MODO ADMIN
       </span>
     </a>
+
+    <style> 
+      .arc-logo {
+        height: 75px;
+        width: auto;
+        object-fit: contain;
+    }
+    </style>
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
       <span class="navbar-toggler-icon"></span>
