@@ -9,9 +9,9 @@ if (!isset($_SESSION["id"])) {
 
 $usuario_id = $_SESSION["id"];
 
-// Si se pulsa comprar
-if (isset($_POST["comprar"])) {
+$mensaje = ""; // Variable para guardar el mensaje
 
+if (isset($_POST["comprar"])) {
     $producto_id = $_POST["producto_id"];
 
     // Comprobar stock
@@ -20,27 +20,22 @@ if (isset($_POST["comprar"])) {
     $producto = $resultado_stock->fetch_assoc();
 
     if ($producto["stock"] > 0) {
-
-        // Insertar compra
-        $insertar = "INSERT INTO compras (usuario_id, producto_id) 
-                     VALUES ('$usuario_id', '$producto_id')";
+        $insertar = "INSERT INTO compras (usuario_id, producto_id) VALUES ('$usuario_id', '$producto_id')";
 
         if ($conn->query($insertar) === TRUE) {
-
-            // Restar stock
-            $actualizar = "UPDATE productos 
-                           SET stock = stock - 1 
-                           WHERE id = '$producto_id'";
-
+            $actualizar = "UPDATE productos SET stock = stock - 1 WHERE id = '$producto_id'";
             $conn->query($actualizar);
 
-            echo "Compra realizada correctamente.";
+            // Guardamos el mensaje en lugar de imprimirlo
+            $mensaje = "<div class='alert alert-success alert-dismissible fade show shadow-sm' role='alert'>
+                            <i class='bi bi-check-circle-fill me-2'></i> ¡Compra realizada con éxito! Gracias por tu apoyo.
+                            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                        </div>";
         } else {
-            echo "Error al realizar la compra.";
+            $mensaje = "<div class='alert alert-danger shadow-sm'>Error al procesar la compra.</div>";
         }
-
     } else {
-        echo "Producto sin stock.";
+        $mensaje = "<div class='alert alert-warning shadow-sm'>Lo sentimos, este producto se ha agotado.</div>";
     }
 }
 
@@ -63,6 +58,8 @@ $resultado = $conn->query($sql);
 <div class="container mt-4">
 
 <h2 class="fw-bold mb-4">Tienda oficial</h2>
+
+<?php echo $mensaje; ?>
 
 <?php
 if ($resultado->num_rows > 0) {

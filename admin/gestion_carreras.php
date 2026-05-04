@@ -115,12 +115,35 @@ $resultado_carreras = $conn->query("SELECT * FROM carreras ORDER BY fecha DESC")
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while($c = $resultado_carreras->fetch_assoc()): ?>
+                        <?php while($c = $resultado_carreras->fetch_assoc()): 
+                            // 1. Definimos la clase de Bootstrap según el tipo
+                            $color_badge = "bg-secondary"; // Color por defecto
+
+                            switch ($c["tipo"]) {
+                                case "popular":
+                                    $color_badge = "bg-primary";  // Azul
+                                    break;
+                                case "media":
+                                    $color_badge = "bg-warning text-dark"; // Amarillo (con texto oscuro para legibilidad)
+                                    break;
+                                case "maraton":
+                                    $color_badge = "bg-danger";   // Rojo
+                                    break;
+                                case "trail":
+                                    $color_badge = "bg-success";  // Verde
+                                    break;
+                            }
+                        ?>
                         <tr>
                             <td class="fw-bold"><?php echo date("d/m/Y", strtotime($c["fecha"])); ?></td>
                             <td><?php echo $c["nombre"]; ?></td>
                             <td><?php echo $c["lugar"]; ?></td>
-                            <td><span class="badge bg-secondary"><?php echo $c["tipo"]; ?></span></td>
+                            <!-- 2. Aplicamos la variable $color_badge aquí -->
+                            <td>
+                                <span class="badge <?php echo $color_badge; ?>">
+                                    <?php echo ucfirst($c["tipo"]); ?>
+                                </span>
+                            </td>
                             <td class="text-center">
                                 <a href="?eliminar=<?php echo $c['id']; ?>" class="btn btn-outline-danger btn-sm px-3" onclick="return confirm('¿Seguro que quieres eliminar esta carrera?')">Eliminar</a>
                             </td>
